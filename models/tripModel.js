@@ -4,12 +4,14 @@ const tripSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: String,
-    comments: String,
-    rating: { type: Number, min: 0, max: 5, default: 0 },
+    id_comments:{
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
     image: String,
     startDate: { type: Date, default: Date.now },
     endDate: { type: Date, default: Date.now },
-    address: String,
+    city: String,
     location: {
       type: {
         type: String,
