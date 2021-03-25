@@ -1,34 +1,32 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 require("./configs/dbConfig");
+var multer  = require('multer');
+require("dotenv").config();
+
 const cors = require("cors");
+const express = require("express");
 const mongoose = require("mongoose");
+const logger = require("morgan");
+
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 
-var app = express();
+const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // Allow different domain to communicate with API
+    origin: process.env.CLIENT_URL, 
     optionsSuccessStatus: 200,
-    credentials: true, // Accept cookies from different domain
+    credentials: true, 
   })
 );
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+const publicPath = path.resolve(__dirname, "public");
+app.use(express.static(publicPath));
 
 // Enable authentication using session
 app.use(
@@ -40,33 +38,34 @@ app.use(
   })
 );
 
+app.use("/", require("./routes/auth"));
+app.use("/", require("./routes/trips"));
+app.use("/", require("./routes/users")); 
+app.use("/", require("./routes/index"));
 
-
-//routes configuration
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-
-
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// For any routes that starts with "/api", catch 404 and forward to error handler
+app.use("/*", (req, res, next) => {
+  let err = new Error("Not Found");
+  err.status = 404;
+  next(err);
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// Error handler
+app.use((err, req, res, next) => {
+  console.error("----- An error happened -----");
+  console.error(err);
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // only render if the error ocurred before sending the response
+  if (!res.headersSent) {
+    res.status(err.status || 500);
+
+    // A limited amount of information sent in production
+    if (process.env.NODE_ENV === "production") res.json(err);
+    else
+      res.json(
+        JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)))
+      );
+  }
 });
 
 module.exports = app;
