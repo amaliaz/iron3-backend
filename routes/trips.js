@@ -17,6 +17,22 @@ router.get("/trips", (req, res, next) => {
       }).catch(error => next(error))
   });
 
+
+ //GET one trip of the connected user
+router.get("/trips/:id", (req, res, next) => {
+    TripModel.findById(req.params.id)
+      .then((trips) => {
+        if (!trips)
+        return res.status(404).json({ message: "Item not found" });
+      if (trips.id_user.toString() !== req.session.currentUser._id.toString()) {
+        return res
+          .status(403)
+          .json({ message: "You are not allowed to update this document" });
+      }
+        res.status(200).json(trips);
+      }).catch(error => next(error))
+  }); 
+
 //POST new trip (only the connected user)
   router.post("/new-trip",(req, res, next) => {
     let newTrip = { id_user: req.session.currentUser, ...req.body };
