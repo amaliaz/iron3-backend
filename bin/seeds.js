@@ -42,4 +42,4 @@ User.create(user)
 .catch((error) => {
     console.log(error);
 })
-mongoose.connection.close();
+// mongoose.connection.close();
