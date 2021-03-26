@@ -5,6 +5,8 @@ const TripModel = require("../models/tripModel");
 const fileUploader = require("./../configs/cloudinary");
 const isLoggedIn = require("./../middlewares/isLoggedIn");
 
+
+//PATCH USER (UPDATE)
 router.patch(
   "/profile",
   isLoggedIn,
@@ -25,6 +27,8 @@ router.patch(
   }
 );
 
+
+//GET the connected user 
 router.get("/profile", isLoggedIn, (req, res, next) => {
   User.findById(req.session.currentUser)
     .select("-password") // Remove the password field from the found document.
@@ -34,6 +38,8 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
     .catch(next);
 });
 
+
+//GET all trips of the current user
 router.get("/profile/trips", isLoggedIn, (req, res, next) => {
   // We retrieve the users id from the session.
   const currentUserId = req.session.currentUser._id; 

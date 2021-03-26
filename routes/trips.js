@@ -34,8 +34,11 @@ router.get("/trips/:id", (req, res, next) => {
   }); 
 
 //POST new trip (only the connected user)
-  router.post("/new-trip",(req, res, next) => {
+  router.post("/new-trip", fileUploader.single("image"), (req, res, next) => {
     let newTrip = { id_user: req.session.currentUser, ...req.body };
+    if (req.file) {
+      newTrip.image = req.file.secure_url;
+    }
     TripModel.create(newTrip)
       .then((dbRes) => {
         res.json(dbRes);
@@ -58,7 +61,7 @@ router.get("/trips/:id", (req, res, next) => {
   //Update selected trip (only the connected user)
   router.patch(
     "/trips/:id",
-    fileUploader.single("profileImg"),
+    fileUploader.single("image"),
     (req, res, next) => {
       let selectedTrip = { id_user: req.session.currentUser, ...req.body };
   
@@ -73,7 +76,7 @@ router.get("/trips/:id", (req, res, next) => {
           }
   
           if (req.file) {
-            selectedTrip.profileImg = req.file.secure_url;
+            selectedTrip.image = req.file.secure_url;
           }
   
           TripModel.findByIdAndUpdate(req.params.id, selectedTrip, { new: true })
