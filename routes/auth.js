@@ -69,7 +69,7 @@ router.post("/signin", async (req, res, next) => {
       req.session.currentUser = {
         _id: foundUser._id,
       };
-      res.redirect("/current-user");
+      res.redirect("api/current-user");
     })
     .catch((error) => {
       next(error);
