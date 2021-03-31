@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
+const User = require("./../models/user");
 const TripModel = require('./../models/tripModel') 
 const fileUploader = require("./../configs/cloudinary");
 const isLoggedIn = require("./../middlewares/isLoggedIn");
