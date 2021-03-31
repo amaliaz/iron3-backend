@@ -50,26 +50,26 @@ router.post("/signup", fileUploader.single("profileImg"), (req, res, next) => {
     });
 });
 
-router.post("/signin", async (req, res, next) => {
+router.post("/signin", (req, res, next) => {
   const { email, password } = req.body;
-
   User.findOne({ email })
     .then((foundUser) => {
       if (!foundUser) {
-        res.status(400).json({ message: "tttt" });
+        res.status(400).json({ message: "Invalid credentials" });
         return;
       }
-
+console.log("FOUND USERRRRR",foundUser);
       const isSamePassword = bcrypt.compareSync(password, foundUser.password);
       if (!isSamePassword) {
         res.status(400).json({ message: "Bad credentials" });
         return;
       }
-
+      console.log("GOOD PASSWORD");
       req.session.currentUser = {
         _id: foundUser._id,
       };
-      res.redirect("api/current-user");
+      console.log("CURRENT USER");
+      res.redirect("current-user");
     })
     .catch((error) => {
       next(error);
@@ -80,6 +80,7 @@ router.get("/current-user", isLoggedIn, (req, res, next) => {
   User.findById(req.session.currentUser._id)
     .select("-password")
     .then((currentUser) => {
+      console.log("CURRENT USER", currentUser);
       res.status(200).json(currentUser);
     })
     .catch((error) => {
