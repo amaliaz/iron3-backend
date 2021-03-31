@@ -41,7 +41,13 @@ app.use(
 app.use("/api", require("./routes/auth"));
 app.use("/api", require("./routes/trips"));
 app.use("/api", require("./routes/users")); 
-app.use("/api", require("./routes/index"));
+
+if (process.env.NODE_ENV === "production") {
+  app.use("*", (req, res, next) => {
+    // If no routes match, send them the React HTML.
+    res.sendFile(__dirname + "/public/index.html");
+  });
+}
 
 // For any routes that starts with "/api", catch 404 and forward to error handler
 app.use("/*", (req, res, next) => {
@@ -49,6 +55,7 @@ app.use("/*", (req, res, next) => {
   err.status = 404;
   next(err);
 });
+
 
 // Error handler
 app.use((err, req, res, next) => {

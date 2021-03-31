@@ -37,8 +37,10 @@ router.get("/trips/:id", (req, res, next) => {
   router.post("/new-trip", fileUploader.single("image"), (req, res, next) => {
     let newTrip = { id_user: req.session.currentUser, ...req.body };
     if (req.file) {
-      newTrip.image = req.file.secure_url;
+      newTrip.image = req.file.path;
+      console.log(req.file)
     }
+    console.log(newTrip)
     TripModel.create(newTrip)
       .then((dbRes) => {
         res.json(dbRes);
