@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const tripSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
+    title: { type: String},
     description: String,
     id_comments:{
       type: Schema.Types.ObjectId,
@@ -25,11 +25,9 @@ const tripSchema = new mongoose.Schema(
     formattedAddress: String,
     transportation: {
       type: String,
-      required: true,
     },
     accomondation: {
       type: String,
-      required: true,
     },
     id_user: {
       type: Schema.Types.ObjectId,

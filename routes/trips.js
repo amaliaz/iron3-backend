@@ -65,10 +65,11 @@ router.get("/trips/:id", (req, res, next) => {
     "/trips/:id",
     fileUploader.single("image"),
     (req, res, next) => {
-      let selectedTrip = { id_user: req.session.currentUser, ...req.body };
+      let selectedTrip = { id_user: req.session.currentUser._id, ...req.body };
   
       TripModel.findById(req.params.id)
         .then((tripDocument) => {
+          console.log("tttt",tripDocument);
           if (!tripDocument)
             return res.status(404).json({ message: "Item not found" });
           if (tripDocument.id_user.toString() !== req.session.currentUser._id.toString()) {
@@ -76,7 +77,6 @@ router.get("/trips/:id", (req, res, next) => {
               .status(403)
               .json({ message: "You are not allowed to update this document" });
           }
-  
           if (req.file) {
             selectedTrip.image = req.file.secure_url;
           }
