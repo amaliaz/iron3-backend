@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const tripSchema = new mongoose.Schema(
   {
-    title: { type: String},
+    title: { type: String, required: true },
     description: String,
     id_comments:{
       type: Schema.Types.ObjectId,
@@ -17,7 +17,6 @@ const tripSchema = new mongoose.Schema(
       type: {
         type: String,
         enum: ["Point"],
-        required: true,
       },
       coordinates: {
         type: [Number],
